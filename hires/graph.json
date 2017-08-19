@@ -1,0 +1,326 @@
+[
+    {
+        "group": 1,
+        "imports": [],
+        "name": "00_rename_standard",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [],
+        "name": "01_FS_T1_file_node",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "01_FS_T1_file_node"
+        ],
+        "name": "02_mriConvert_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [],
+        "name": "03_datasource",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "03_datasource"
+        ],
+        "name": "04_bet_epi",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "04_bet_epi"
+        ],
+        "name": "05_take_first_TR",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "04_bet_epi"
+        ],
+        "name": "06_EPI_file_selector_node",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "06_EPI_file_selector_node"
+        ],
+        "name": "07_curate",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "07_curate"
+        ],
+        "name": "08_realign_space",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "08_realign_space"
+        ],
+        "name": "09_mean_space",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "09_mean_space",
+            "05_take_first_TR"
+        ],
+        "name": "10_prereg_flirt_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "09_mean_space"
+        ],
+        "name": "11_namer",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "09_mean_space"
+        ],
+        "name": "12_bbregister_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "12_bbregister_N"
+        ],
+        "name": "13_invert_EPI_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "13_invert_EPI_N"
+        ],
+        "name": "14_rename_highres2example_func",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "12_bbregister_N"
+        ],
+        "name": "15_rename_example_func2highres",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "12_bbregister_N"
+        ],
+        "name": "16_rename_register",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "09_mean_space"
+        ],
+        "name": "17_rename_example_func",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "02_mriConvert_N"
+        ],
+        "name": "18_bet_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "18_bet_N"
+        ],
+        "name": "19_flirt_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "19_flirt_N"
+        ],
+        "name": "20_invert_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "09_mean_space",
+            "10_prereg_flirt_N",
+            "04_bet_epi"
+        ],
+        "name": "21_realign_all",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "21_realign_all"
+        ],
+        "name": "22_plot_motion",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "21_realign_all"
+        ],
+        "name": "23_sgfilter",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "23_sgfilter"
+        ],
+        "name": "24_percent_signal_change",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "24_percent_signal_change"
+        ],
+        "name": "25_average_over_runs",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "24_percent_signal_change",
+            "04_bet_epi",
+            "25_average_over_runs",
+            "23_sgfilter"
+        ],
+        "name": "26_sinker",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "22_plot_motion",
+            "21_realign_all",
+            "11_namer"
+        ],
+        "name": "27_sinker",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "21_realign_all"
+        ],
+        "name": "28_plot_motion",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "28_plot_motion",
+            "21_realign_all",
+            "11_namer"
+        ],
+        "name": "29_sinker",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "20_invert_N"
+        ],
+        "name": "30_rename_standard2highres",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "02_mriConvert_N"
+        ],
+        "name": "31_rename_highres",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "12_bbregister_N",
+            "19_flirt_N"
+        ],
+        "name": "32_concat_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "32_concat_N"
+        ],
+        "name": "33_rename_example_func2standard",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "32_concat_N"
+        ],
+        "name": "34_invert_N",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "34_invert_N"
+        ],
+        "name": "35_rename_standard2example_func",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "19_flirt_N"
+        ],
+        "name": "36_rename_highres2standard",
+        "size": 1
+    },
+    {
+        "group": 1,
+        "imports": [
+            "14_rename_highres2example_func",
+            "36_rename_highres2standard",
+            "16_rename_register",
+            "33_rename_example_func2standard",
+            "31_rename_highres",
+            "17_rename_example_func",
+            "15_rename_example_func2highres",
+            "30_rename_standard2highres",
+            "35_rename_standard2example_func",
+            "00_rename_standard"
+        ],
+        "name": "37_sinker",
+        "size": 1
+    },
+    {
+        "group": 2,
+        "imports": [],
+        "name": "38_sinker",
+        "size": 1
+    }
+]

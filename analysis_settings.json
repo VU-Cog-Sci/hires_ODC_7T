@@ -1,0 +1,16 @@
+{
+"bet_f_value":  0.05,
+"bet_g_value":  0.0,
+"use_FS": 1,
+"B0_or_topup": "neither",
+"do_fnirt": 0,
+"which_file_is_EPI_space": "middle",
+"dilate_kernel_size": 0.0,
+"psc_func": "median",
+"av_across_runs_func": "median",
+"moco_method": "AFNI",
+"sg_filter_order": 1,
+"sg_filter_window_length": 270,
+"perform_mri": 1,
+"perform_blockdesign_glm": 1
+}
