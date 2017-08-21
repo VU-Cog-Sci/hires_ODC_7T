@@ -61,3 +61,7 @@ target/
 *.swp*
 # notebook stuff
 *.ipynb_checkpoints*
+
+
+*.nii.gz
+*.tsv
