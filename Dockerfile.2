@@ -35,3 +35,6 @@ USER $NB_USER
 COPY notebooks $HOME/notebooks
 COPY src $HOME/src
 
+USER root
+RUN chown -R $NB_USER:users $HOME
+USER $NB_USER

@@ -32,7 +32,6 @@ docker run --rm kaczmarj/neurodocker generate \
 --instruct="RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true" \
 --instruct="ENV SHELL /bin/zsh" \
 --workdir /home/neuro \
---expose 8888 \
 --no-check-urls > Dockerfile
 
 cat Dockerfile.2 >> Dockerfile

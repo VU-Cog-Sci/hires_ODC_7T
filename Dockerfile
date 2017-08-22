@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-22 16:11:30
+# Timestamp: 2017-08-22 18:21:46
 
 FROM ubuntu:xenial-20161213
 
@@ -202,8 +202,6 @@ ENV SHELL /bin/zsh
 
 WORKDIR /home/neuro
 
-EXPOSE 8888
-
 ENV NB_USER neuro
 ENV HOME /home/$NB_USER
 
@@ -241,3 +239,6 @@ USER $NB_USER
 COPY notebooks $HOME/notebooks
 COPY src $HOME/src
 
+USER root
+RUN chown -R $NB_USER:users $HOME
+USER $NB_USER
