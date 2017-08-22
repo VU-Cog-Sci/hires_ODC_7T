@@ -46,10 +46,12 @@ docker run -P -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry \
 ```
 
 
-You now see a 
+You can now open the Jupyter Notebook using your favorite browser (Chrome) with the following URL:
+http://localhost:8888/
+
 ### Shell
 
-  * Another option is to start a (z)shell and peek around yourself
+ * Another option is to start a (z)shell and peek around yourself
 ```
 docker run -it -v $DATA_PATH:/data knapenlab/hiresbinocularrivalry zsh
 ```
@@ -59,11 +61,7 @@ In principle, this Docker image can be started using [Jupyterhub](https://github
 in a similar way as the standard [https://github.com/jupyter/docker-stacks](Docker-stacks).
 
 ### Jupyter-lab 
-  * Lastly, an experimental feature is to stary jupyter-lab
+ * Lastly, an experimental feature is to stary jupyter-lab
 ```
 docker run -it -p 8888:8888 -v $DATA_PATH:/data knapenlab/hiresbinocularrivalry jupyter-lab
 ```
-
-###Analysis of hires fMRI project
-
-T
