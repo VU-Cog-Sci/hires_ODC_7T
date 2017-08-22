@@ -65,3 +65,5 @@ target/
 
 *.nii.gz
 *.tsv
+
+*.DS_Store
