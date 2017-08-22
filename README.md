@@ -11,8 +11,8 @@ To run the docker image, do the following:
 ```
 git clone https://github.com/VU-Cog-Sci/hires_ODC_7T
 ```
-
- * Now, build the Docker image (this will take a while, but has to be done only once)
+<br>
+ * Build the Docker image (this will take a while, but has to be done only once):
 ```
 docker build . -t "knapenlab/hiresbinocularrivalry"
 ```
@@ -24,16 +24,16 @@ data can be found:
 export DATA_PATH="/path/to/the/data"
 ```
 
-* Now, you have multiple options. By default, the image starts a Jupyter Notebook server:
+<br>
+* There are multiple ways to run the docker. By default, the image starts a Jupyter Notebook server:
 ```
 docker run -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry
 ```
-
- ** Another option is to start a (z)shell and peek around yourself
+  * Another option is to start a (z)shell and peek around yourself
 ```
 docker run -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry zsh
 ```
- ** Lastly, an experimental feature is to stary jupyter-lab
+  * Lastly, an experimental feature is to stary jupyter-lab
 ```
 docker run -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry jupyter-lab
 ```
