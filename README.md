@@ -7,8 +7,36 @@ All the analysis in this repository can (should) be run using the included Docke
 
 To run the docker image, do the following:
  * First, clone this repository:
-[code]git clone https://github.com/VU-Cog-Sci/hires_ODC_7T[/code]
 
+```
+git clone https://github.com/VU-Cog-Sci/hires_ODC_7T
+```
+
+ * Now, build the Docker image (this will take a while, but has to be done only once)
+```
+docker build . -t "knapenlab/hiresbinocularrivalry"
+```
+
+* You now can run the Docker, it is important that you specify the path where the relevant
+data can be found: 
+
+```
+export DATA_PATH="/path/to/the/data"
+```
+
+* Now, you have multiple options. By default, the image starts a Jupyter Notebook server:
+```
+docker run -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry
+```
+
+ ** Another option is to start a (z)shell and peek around yourself
+```
+docker run -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry zsh
+```
+ ** Lastly, an experimental feature is to stary jupyter-lab
+```
+docker run -it -v DATA_PATH:/data knapenlab/hiresbinocularrivalry jupyter-lab
+```
 
 ###Analysis of hires fMRI project
 

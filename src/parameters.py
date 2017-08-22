@@ -1,6 +1,10 @@
 import os
 import json
 
+if 'experiments' not in locals():
+    experiment = '055'
+
+
 if 'aeneas' in ''.join(os.uname()[1].split('.')):
     raw_disk = '/home/raw_data/'
     pp_disk = '/home/shared/'

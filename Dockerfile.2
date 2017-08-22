@@ -1,0 +1,37 @@
+ENV NB_USER neuro
+ENV HOME /home/$NB_USER
+
+USER root
+
+# Install Tini
+RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.10.0/tini && \
+    echo "1361527f39190a7338a0b434bd8c88ff7233ce7b9a4876f3315c22fce7eca1b0 *tini" | sha256sum -c - && \
+    mv tini /usr/local/bin/tini && \
+    chmod +x /usr/local/bin/tini
+
+
+WORKDIR /home/$NB_USER
+
+RUN conda install --quiet --yes \
+    'notebook=5.0.*' \
+    'jupyterhub=0.7.*' \
+    'jupyterlab=0.24.*' \
+    && conda clean -tipsy
+
+# Configure container startup
+# ENTRYPOINT ["tini", "--"]*
+CMD ["start-notebook.sh"]
+
+# Add local files as late as possible to avoid cache busting
+COPY start.sh /usr/local/bin/
+COPY start-notebook.sh /usr/local/bin/
+COPY start-singleuser.sh /usr/local/bin/
+COPY jupyter_notebook_config.py /etc/jupyter/
+
+RUN chown -R $NB_USER:users /etc/jupyter/
+
+COPY notebooks $HOME/notebooks
+COPY src $HOME/src
+
+# Switch back to jovyan to avoid accidental container runs as root
+USER $NB_USER
