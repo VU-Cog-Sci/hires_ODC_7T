@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-22 15:55:34
+# Timestamp: 2017-08-22 16:11:30
 
 FROM ubuntu:xenial-20161213
 
@@ -236,8 +236,8 @@ COPY jupyter_notebook_config.py /etc/jupyter/
 
 RUN chown -R $NB_USER:users /etc/jupyter/
 
+USER $NB_USER
+
 COPY notebooks $HOME/notebooks
 COPY src $HOME/src
 
-# Switch back to jovyan to avoid accidental container runs as root
-USER $NB_USER
