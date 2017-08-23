@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-22 18:21:46
+# Timestamp: 2017-08-23 13:35:07
 
 FROM ubuntu:xenial-20161213
 
@@ -242,3 +242,6 @@ COPY src $HOME/src
 USER root
 RUN chown -R $NB_USER:users $HOME
 USER $NB_USER
+
+RUN pip install -q --no-cache-dir \
+    sklearn nilearn pybids

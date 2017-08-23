@@ -38,3 +38,6 @@ COPY src $HOME/src
 USER root
 RUN chown -R $NB_USER:users $HOME
 USER $NB_USER
+
+RUN pip install -q --no-cache-dir \
+    sklearn nilearn pybids
