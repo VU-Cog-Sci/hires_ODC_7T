@@ -5,7 +5,9 @@ from nipype.interfaces import fsl
 import nipype.interfaces.utility as util
 import nipype.interfaces.io as nio
 
-def create_bids_topup_workflow(name='bids_topup_workflow', base_dir='/home/neuro/workflow_folders'):
+def create_bids_topup_workflow(mode='concatenate',
+                               name='bids_topup_workflow', 
+                               base_dir='/home/neuro/workflow_folders'):
 
     inputspec = pe.Node(util.IdentityInterface(fields=['bold',
                                                        'bold_metadata',
@@ -16,23 +18,40 @@ def create_bids_topup_workflow(name='bids_topup_workflow', base_dir='/home/neuro
     workflow = pe.Workflow(name=name, base_dir=base_dir)
 
     topup_parameters = pe.Node(TopupScanParameters, name='topup_scanparameters')
-
+    topup_parameters.inputs.mode = mode
     workflow.connect(inputspec, 'bold_metadata', topup_parameters, 'bold_metadata')
     workflow.connect(inputspec, 'fieldmap_metadata', topup_parameters, 'fieldmap_metadata')
-
-    merge_list = pe.Node(util.Merge(2), name='merge_lists')
-    workflow.connect(inputspec, 'bold', merge_list, 'in1') 
-    workflow.connect(inputspec, 'fieldmap', merge_list, 'in2') 
-
-    merger = pe.Node(fsl.Merge(dimension='t'), name='merger')
-    workflow.connect(merge_list, 'out', merger, 'in_files')
 
     topup_node = pe.Node(fsl.TOPUP(args='-v'),
                             name='topup')
 
-
-    workflow.connect(merger, 'merged_file', topup_node, 'in_file')
     workflow.connect(topup_parameters, 'encoding_file', topup_node, 'encoding_file')
+
+    merge_list = pe.Node(util.Merge(2), name='merge_lists')
+
+    if mode == 'concatenate':
+        workflow.connect(inputspec, 'bold', merge_list, 'in1') 
+        workflow.connect(inputspec, 'fieldmap', merge_list, 'in2') 
+
+
+    elif mode == 'average':
+        mc_bold = pe.Node(fsl.MCFLIRT(), name='mc_bold')
+        meaner_bold = pe.Node(fsl.MeanImage(dim='T'), name='meaner_bold')
+        workflow.connect(inputspec, 'bold', mc_bold, 'in_file') 
+        workflow.connect(mc_bold, 'out_file', meaner_bold, 'in_file') 
+
+        mc_fieldmap = pe.Node(fsl.MCFLIRT(), name='mc_fieldmap')
+        workflow.connect(meaner_bold, 'out_file', mc_fieldmap, 'reference')
+
+        meaner_fieldmap = pe.Node(fsl.MeanImage(dim='T'), name='meaner_fieldmap')
+        workflow.connect(mc_fieldmap, 'out_file', meaner_fieldmap, 'in_file') 
+
+        workflow.connect(meaner_bold, 'out_file', merge_list, 'in1')
+        workflow.connect(meaner_bold, 'out_file', merge_list, 'in2')
+
+    merger = pe.Node(fsl.Merge(dimension='t'), name='merger')
+    workflow.connect(merge_list, 'out', merger, 'in_files')
+    workflow.connect(merger, 'merged_file', topup_node, 'in_file')
 
     outputspec = pe.Node(util.IdentityInterface(fields=['out_corrected',
                                                         'out_field',

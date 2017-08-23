@@ -62,26 +62,31 @@ def topup_scan_params(bold_metadata, fieldmap_metadata, mode='concatenate'):
         epi_phaseEncodingDirection = [epi_phaseEncodingDirection]
     
     if mode == 'concatenate':
+        bold_idx = n_bold_volumes
         scan_param_array = np.zeros((n_bold_volumes + n_epi_volumes, 4))
-        
-        for encoding_direction in bold_phaseEncodingDirection:
-            if encoding_direction.endswith('-'):
-                scan_param_array[:n_bold_volumes, ['i', 'j', 'k'].index(encoding_direction[0])] = -1
-            else:
-                scan_param_array[:n_bold_volumes, ['i', 'j', 'k'].index(encoding_direction[0])] = 1
-                
-        for encoding_direction in epi_phaseEncodingDirection:
-            if encoding_direction.endswith('-'):
-                scan_param_array[n_bold_volumes:, ['i', 'j', 'k'].index(encoding_direction[0])] = -1
-            else:
-                scan_param_array[n_bold_volumes:, ['i', 'j', 'k'].index(encoding_direction[0])] = 1
-                
-        
-        # Vectors should be unity length
-        scan_param_array[:, :3] /= np.sqrt((scan_param_array[:, :3]**2).sum(1))[:, np.newaxis]
-        
-        scan_param_array[:n_bold_volumes, 3] = bold_total_readouttime
-        scan_param_array[n_bold_volumes:, 3] = epi_total_readouttime
+    elif mode == 'average':
+        bold_idx = 1
+        scan_param_array = np.zeros((2, 4))
+
+    
+    for encoding_direction in bold_phaseEncodingDirection:
+        if encoding_direction.endswith('-'):
+            scan_param_array[:bold_idx, ['i', 'j', 'k'].index(encoding_direction[0])] = -1
+        else:
+            scan_param_array[:bold_idx, ['i', 'j', 'k'].index(encoding_direction[0])] = 1
+            
+    for encoding_direction in epi_phaseEncodingDirection:
+        if encoding_direction.endswith('-'):
+            scan_param_array[bold_idx:, ['i', 'j', 'k'].index(encoding_direction[0])] = -1
+        else:
+            scan_param_array[bold_idx:, ['i', 'j', 'k'].index(encoding_direction[0])] = 1
+            
+    
+    # Vectors should be unity length
+    scan_param_array[:, :3] /= np.sqrt((scan_param_array[:, :3]**2).sum(1))[:, np.newaxis]
+    
+    scan_param_array[:bold_idx, 3] = bold_total_readouttime
+    scan_param_array[bold_idx:, 3] = epi_total_readouttime
                 
 
     fn = os.path.abspath('scan_params.txt')
@@ -92,6 +97,7 @@ def topup_scan_params(bold_metadata, fieldmap_metadata, mode='concatenate'):
 
 
 TopupScanParameters = util.Function(function=topup_scan_params,
-                                    input_names=['bold_metadata',
+                                    input_names=['mode',
+                                                 'bold_metadata',
                                                  'fieldmap_metadata'],
                                     output_names=['encoding_file'])
