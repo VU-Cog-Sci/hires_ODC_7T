@@ -69,3 +69,7 @@ target/
 *.DS_Store
 data/
 Untitled*
+
+crash*
+
+notebooks/zooi
