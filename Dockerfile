@@ -244,5 +244,6 @@ USER root
 RUN chown -R $NB_USER:users $HOME
 USER $NB_USER
 
+ENV FSLOUTPUTTYPE NIFTI_GZ
 RUN pip install -q --no-cache-dir \
     sklearn nilearn pybids
