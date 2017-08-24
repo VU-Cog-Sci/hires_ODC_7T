@@ -1,4 +1,4 @@
-from nodes import TopupScanParameters, BIDSDataGrabber
+from nodes import TopupScanParameters, BIDSDataGrabber, ComputeEPIMask
 
 import nipype.pipeline as pe
 from nipype.interfaces import fsl
@@ -17,6 +17,23 @@ def create_bids_topup_workflow(mode='concatenate',
 
     workflow = pe.Workflow(name=name, base_dir=base_dir)
 
+    # Mask the BOLD and fieldmap using compute_epi_maks from nilearn ("Nichols method")
+    create_bold_mask = pe.Node(ComputeEPIMask(upper_cutoff=0.8), name='create_bold_mask')
+    create_fieldmap_mask = pe.Node(ComputeEPIMask(upper_cutoff=0.8), name='create_fieldmap_mask')
+
+    workflow.connect(inputspec, 'bold', create_bold_mask, 'in_file') 
+    workflow.connect(inputspec, 'fieldmap', create_fieldmap_mask, 'in_file') 
+
+    applymask_bold = pe.Node(fsl.ApplyMask(), name="mask_bold")
+    applymask_fieldmap = pe.Node(fsl.ApplyMask(), name="mask_fieldmap")
+
+    workflow.connect(create_bold_mask, 'mask_file', applymask_bold, 'mask_file') 
+    workflow.connect(inputspec, 'bold', applymask_bold, 'in_file') 
+
+    workflow.connect(create_fieldmap_mask, 'mask_file', applymask_fieldmap, 'mask_file') 
+    workflow.connect(inputspec, 'fieldmap', applymask_fieldmap, 'in_file') 
+
+    # Create the parameter file that steers TOPUP
     topup_parameters = pe.Node(TopupScanParameters, name='topup_scanparameters')
     topup_parameters.inputs.mode = mode
     workflow.connect(inputspec, 'bold_metadata', topup_parameters, 'bold_metadata')
@@ -30,8 +47,8 @@ def create_bids_topup_workflow(mode='concatenate',
     merge_list = pe.Node(util.Merge(2), name='merge_lists')
 
     if mode == 'concatenate':
-        workflow.connect(inputspec, 'bold', merge_list, 'in1') 
-        workflow.connect(inputspec, 'fieldmap', merge_list, 'in2') 
+        workflow.connect(applymask_bold, 'out_file', merge_list, 'in1') 
+        workflow.connect(applymask_fieldmap, 'out_file', merge_list, 'in2') 
 
 
     elif mode == 'average':
@@ -40,7 +57,7 @@ def create_bids_topup_workflow(mode='concatenate',
                           mean_vol=True), name='mc_bold')
 
         meaner_bold = pe.Node(fsl.MeanImage(), name='meaner_bold')
-        workflow.connect(inputspec, 'bold', mc_bold, 'in_file') 
+        workflow.connect(applymask_bold, 'out_file', mc_bold, 'in_file') 
         workflow.connect(mc_bold, 'out_file', meaner_bold, 'in_file') 
 
         mc_fieldmap = pe.Node(fsl.MCFLIRT(cost='normcorr',
@@ -48,12 +65,13 @@ def create_bids_topup_workflow(mode='concatenate',
                           mean_vol=True), name='mc_fieldmap')
 
         workflow.connect(meaner_bold, 'out_file', mc_fieldmap, 'ref_file')
+        workflow.connect(applymask_fieldmap, 'out_file', mc_fieldmap, 'in_file')
 
         meaner_fieldmap = pe.Node(fsl.MeanImage(), name='meaner_fieldmap')
         workflow.connect(mc_fieldmap, 'out_file', meaner_fieldmap, 'in_file') 
 
         workflow.connect(meaner_bold, 'out_file', merge_list, 'in1')
-        workflow.connect(meaner_bold, 'out_file', merge_list, 'in2')
+        workflow.connect(meaner_fieldmap, 'out_file', merge_list, 'in2')
 
     merger = pe.Node(fsl.Merge(dimension='t'), name='merger')
     workflow.connect(merge_list, 'out', merger, 'in_files')
@@ -85,7 +103,7 @@ if __name__ == '__main__':
     for var in ['bold', 'bold_metadata', 'fieldmap', 'fieldmap_metadata']:
         workflow.connect(dg, var, workflow.get_node('inputspec'), var)
 
-    ds = pe.Node(nio.DataSink(base_directory='/data/derivatives'),
+    ds = pe.Node(nio.DataSink(base_directory='/data/tests'),
                  name='datasink')
 
     workflow.connect(workflow.get_node('outputspec'), 'out_corrected', ds, 'out_corrected')
