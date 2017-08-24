@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-24 09:56:45
+# Timestamp: 2017-08-24 13:12:10
 
 FROM ubuntu:xenial-20161213
 
@@ -222,6 +222,9 @@ RUN conda install --quiet --yes \
     'jupyterlab=0.24.*' \
     && conda clean -tipsy
 
+RUN pip install -q --no-cache-dir \
+    sklearn nilearn pybids fmriprep
+
 # Configure container startup
 # ENTRYPOINT ["tini", "--"]*
 CMD ["start-notebook.sh"]
@@ -245,5 +248,4 @@ RUN chown -R $NB_USER:users $HOME
 USER $NB_USER
 
 ENV FSLOUTPUTTYPE NIFTI_GZ
-RUN pip install -q --no-cache-dir \
-    sklearn nilearn pybids fmriprep
+COPY nipype.cfg /home/neuro/.nipype
