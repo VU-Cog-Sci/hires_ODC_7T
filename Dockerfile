@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-24 09:54:32
+# Timestamp: 2017-08-24 09:56:45
 
 FROM ubuntu:xenial-20161213
 
@@ -246,4 +246,4 @@ USER $NB_USER
 
 ENV FSLOUTPUTTYPE NIFTI_GZ
 RUN pip install -q --no-cache-dir \
-    sklearn nilearn pybids
+    sklearn nilearn pybids fmriprep
