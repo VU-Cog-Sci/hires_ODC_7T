@@ -1,12 +1,14 @@
 import nipype.pipeline.engine as pe
 import nipype.interfaces.utility as util
 
-from nipype.interfaces.base import traits, File, BaseInterface, BaseInterfaceInputSpec
+from nipype.interfaces.base import traits, File, BaseInterface, BaseInterfaceInputSpec, TraitedSpec
 from niworkflows.common import report as nrc
 from niworkflows import NIWORKFLOWS_LOG
 from nilearn.masking import compute_epi_mask
 
 import os
+import nibabel as nb
+from nipype.utils.filemanip import fname_presuffix
 
 
 def get_topup_data(subject, task, run, data_dir='/data/sourcedata'):
@@ -151,3 +153,37 @@ class ComputeEPIMask(nrc.SegmentationRC, BaseInterface):
 
         NIWORKFLOWS_LOG.info('Generating report for nilearn.compute_epi_mask. file "%s", and mask file "%s"',
                              self._anat_file, self._mask_file)
+
+
+class CopyHeaderInputSpec(BaseInterfaceInputSpec):
+    in_file = File(exists=True, mandatory=True, desc='the file we get the data from')
+    hdr_file = File(exists=True, mandatory=True, desc='the file we get the header from')
+
+
+class CopyHeaderOutputSpec(TraitedSpec):
+    out_file = File(exists=True, desc='written file path')
+
+
+class CopyHeader(BaseInterface):
+    """
+    Copy a header from the `hdr_file` to `out_file` with data drawn from
+    `in_file`.
+    """
+    input_spec = CopyHeaderInputSpec
+    output_spec = CopyHeaderOutputSpec
+
+    def _run_interface(self, runtime):
+        in_img = nb.load(self.inputs.hdr_file)
+        out_img = nb.load(self.inputs.in_file)
+        new_img = out_img.__class__(out_img.get_data(), in_img.affine, in_img.header)
+        new_img.set_data_dtype(out_img.get_data_dtype())
+
+        out_name = fname_presuffix(self.inputs.in_file,
+                                   suffix='_fixhdr', newpath='.')
+        new_img.to_filename(out_name)
+        self.outputs = self._outputs().get()
+        self.outputs['out_file'] = out_name
+        return runtime
+
+    def _list_outputs(self):
+        return self.outputs
