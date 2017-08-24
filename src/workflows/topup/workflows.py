@@ -35,15 +35,21 @@ def create_bids_topup_workflow(mode='concatenate',
 
 
     elif mode == 'average':
-        mc_bold = pe.Node(fsl.MCFLIRT(), name='mc_bold')
-        meaner_bold = pe.Node(fsl.MeanImage(dim='T'), name='meaner_bold')
+        mc_bold = pe.Node(fsl.MCFLIRT(cost='normcorr',
+                          interpolation='sinc',
+                          mean_vol=True), name='mc_bold')
+
+        meaner_bold = pe.Node(fsl.MeanImage(), name='meaner_bold')
         workflow.connect(inputspec, 'bold', mc_bold, 'in_file') 
         workflow.connect(mc_bold, 'out_file', meaner_bold, 'in_file') 
 
-        mc_fieldmap = pe.Node(fsl.MCFLIRT(), name='mc_fieldmap')
-        workflow.connect(meaner_bold, 'out_file', mc_fieldmap, 'reference')
+        mc_fieldmap = pe.Node(fsl.MCFLIRT(cost='normcorr',
+                          interpolation='sinc',
+                          mean_vol=True), name='mc_fieldmap')
 
-        meaner_fieldmap = pe.Node(fsl.MeanImage(dim='T'), name='meaner_fieldmap')
+        workflow.connect(meaner_bold, 'out_file', mc_fieldmap, 'ref_file')
+
+        meaner_fieldmap = pe.Node(fsl.MeanImage(), name='meaner_fieldmap')
         workflow.connect(mc_fieldmap, 'out_file', meaner_fieldmap, 'in_file') 
 
         workflow.connect(meaner_bold, 'out_file', merge_list, 'in1')
@@ -74,7 +80,7 @@ if __name__ == '__main__':
     dg.inputs.task = 'binoculardots055'
     dg.inputs.run = 1
 
-    workflow = create_bids_topup_workflow()
+    workflow = create_bids_topup_workflow(mode='average')
 
     for var in ['bold', 'bold_metadata', 'fieldmap', 'fieldmap_metadata']:
         workflow.connect(dg, var, workflow.get_node('inputspec'), var)
