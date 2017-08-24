@@ -34,6 +34,7 @@ USER $NB_USER
 
 COPY notebooks $HOME/notebooks
 COPY src $HOME/src
+COPY license.txt /opt/freesurfer
 
 USER root
 RUN chown -R $NB_USER:users $HOME

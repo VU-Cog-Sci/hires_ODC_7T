@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-23 13:35:07
+# Timestamp: 2017-08-24 09:54:32
 
 FROM ubuntu:xenial-20161213
 
@@ -238,6 +238,7 @@ USER $NB_USER
 
 COPY notebooks $HOME/notebooks
 COPY src $HOME/src
+COPY license.txt /opt/freesurfer
 
 USER root
 RUN chown -R $NB_USER:users $HOME
