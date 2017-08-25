@@ -1,0 +1,10 @@
+version: '2'
+services:
+  7t_hires:
+    build: .
+    ports:
+     - "8889:8888"
+    volumes:
+     - /home/hollander/projects/hires_ODC_7T/notebooks:/home/neuro/notebooks
+     - /home/hollander/projects/hires_ODC_7T/src:/home/neuro/src
+     - /home/hollander/projects/hires_ODC_7T/spynoza:/home/neuro/spynoza
