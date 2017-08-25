@@ -3,8 +3,10 @@ services:
   7t_hires:
     build: .
     ports:
-     - "8889:8888"
+     - "8888:8888"
     volumes:
      - ./notebooks:/home/neuro/notebooks
      - ./src:/home/neuro/src
      - ./spynoza:/home/neuro/spynoza
+     - $HOME/data/hires:/data
+     - $HOME/workflow_folders:/home/neuro/workflow_folders
