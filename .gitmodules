@@ -1,0 +1,4 @@
+[submodule "spynoza"]
+	path = spynoza
+	url = https://github.com/spinoza-centre/spynoza
+	branch = 7t_hires
