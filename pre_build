@@ -29,7 +29,6 @@ docker run --rm kaczmarj/neurodocker generate \
 	    rm -rf /tmp/* /etc/apk/cache/*" \
 --instruct="RUN npm install -g configurable-http-proxy"  \
 --user=neuro \
---instruct="RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true" \
 --instruct="ENV SHELL /bin/zsh" \
 --workdir /home/neuro \
 --no-check-urls > Dockerfile

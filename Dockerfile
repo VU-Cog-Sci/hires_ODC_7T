@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-24 13:12:10
+# Timestamp: 2017-08-25 08:42:46
 
 FROM ubuntu:xenial-20161213
 
@@ -195,9 +195,6 @@ RUN npm install -g configurable-http-proxy
 USER neuro
 
 # User-defined instruction
-RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
-
-# User-defined instruction
 ENV SHELL /bin/zsh
 
 WORKDIR /home/neuro
@@ -249,3 +246,4 @@ USER $NB_USER
 
 ENV FSLOUTPUTTYPE NIFTI_GZ
 COPY nipype.cfg /home/neuro/.nipype
+RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
