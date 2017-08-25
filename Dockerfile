@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-08-25 08:42:46
+# Timestamp: 2017-08-25 10:14:40
 
 FROM ubuntu:xenial-20161213
 
@@ -236,14 +236,20 @@ RUN chown -R $NB_USER:users /etc/jupyter/
 
 USER $NB_USER
 
-COPY notebooks $HOME/notebooks
-COPY src $HOME/src
+#COPY notebooks $HOME/notebooks
+#COPY src $HOME/src
+
 COPY license.txt /opt/freesurfer
 
 USER root
+RUN mkdir /data && chown -R $NB_USER:users /data
 RUN chown -R $NB_USER:users $HOME
 USER $NB_USER
 
 ENV FSLOUTPUTTYPE NIFTI_GZ
 COPY nipype.cfg /home/neuro/.nipype
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
+RUN echo TERM=xterm >> /home/neuro/.zshrc
+
+RUN pip install -q --no-cache-dir \
+    https://github.com/spinoza-centre/spynoza/archive/7t_hires.zip
