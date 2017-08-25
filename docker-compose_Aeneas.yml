@@ -8,3 +8,4 @@ services:
      - /home/hollander/projects/hires_ODC_7T/notebooks:/home/neuro/notebooks
      - /home/hollander/projects/hires_ODC_7T/src:/home/neuro/src
      - /home/hollander/projects/hires_ODC_7T/spynoza:/home/neuro/spynoza
+     - $HOME/data:/data
