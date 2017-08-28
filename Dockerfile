@@ -14,9 +14,6 @@ WORKDIR /home/neuro
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true && \
  echo TERM=xterm >> /home/neuro/.zshrc
 
-RUN pip install -q --no-cache-dir \
-    https://github.com/spinoza-centre/spynoza/archive/7t_hires.zip
-
 RUN conda install -c conda-forge \
      --quiet --yes \
     'notebook=5.0.*' \
@@ -33,4 +30,10 @@ ENTRYPOINT ["/bin/zsh"]
 COPY start.sh /usr/local/bin/
 COPY start-notebook.sh /usr/local/bin/
 COPY start-singleuser.sh /usr/local/bin/
+
+COPY spynoza/ /home/neuro/spynoza
+RUN cd /home/neuro/spynoza && \
+    pip install . && \
+    rm -rf ~/.cache/pip
+    
 COPY nipype.cfg /home/neuro/.nipype
