@@ -1,7 +1,7 @@
 FROM poldracklab/fmriprep
 
 RUN apt-get update  \
-    && apt-get install -yq --no-install-recommends zsh wget \
+    && apt-get install -yq --no-install-recommends zsh wget vim \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
@@ -33,3 +33,4 @@ ENTRYPOINT ["/bin/zsh"]
 COPY start.sh /usr/local/bin/
 COPY start-notebook.sh /usr/local/bin/
 COPY start-singleuser.sh /usr/local/bin/
+COPY nipype.cfg /home/neuro/.nipype
