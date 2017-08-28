@@ -4,7 +4,7 @@ import os
 
 os.environ['SUBJECTS_DIR'] = '/data/freesurfer'
 
-skull_strip_ants = True
+skull_strip_ants = False
 output_spaces = ['T1w', 'template', 'fsnative']
 template = 'MNI152NLin2009cAsym'
 debug = False
@@ -22,7 +22,7 @@ wf = base.init_single_subject_wf(subject_id='012',
                                  debug=False,
                                  anat_only=True,
                                  longitudinal=False,
-                                 skull_strip_ants=True,
+                                 skull_strip_ants=False,
                                  reportlets_dir='/data/reportlets/anat',
                                  output_dir='/data/derivative/anat',
                                  bids_dir='/data/sourcedata/',
@@ -46,6 +46,8 @@ wf.base_dir = '/data/workflow_folders/'
 plugin_settings = {}
 plugin_settings['plugin'] = 'MultiProc'
 plugin_settings['plugin_args'] = {'n_procs': 3}
+
+plugin_settings['plugin'] = 'Linear'
 
 
 #wf.write_graph()
