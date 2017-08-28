@@ -1,6 +1,9 @@
 version: '2'
 services:
   7t_hires:
+    entrypoint: zsh 
+    stdin_open: true
+    tty: true
     build: .
     ports:
      - "8888:8888"
