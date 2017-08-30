@@ -8,6 +8,12 @@ RUN apt-get update  \
 RUN useradd -g root --create-home --shell /bin/bash neuro \
     && usermod -aG sudo neuro \
     && chmod -R 775 /usr/local/miniconda
+
+RUN apt-get update \
+    && apt-get install -y python python-pip python-dev build-essential software-properties-common \
+    && add-apt-repository ppa:openjdk-r/ppa && apt-get update -qq && apt-get install -y openjdk-8-jdk \ 
+    && pip install --allow-all-external --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nighres
+
 USER neuro
 WORKDIR /home/neuro
 
@@ -37,3 +43,14 @@ RUN cd /home/neuro/spynoza && \
     rm -rf ~/.cache/pip
     
 COPY nipype.cfg /home/neuro/.nipype
+ENV MIPAV=/home/neuro/mipav
+RUN mkdir $MIPAV \
+    && curl -sSL 'https://www.dropbox.com/s/fc9tt7rp19wy0hx/mipav.tar.gz' \
+    | tar -xzC $MIPAV --strip-components 1
+
+ENV JAVALIB=$MIPAV/jre/lib/ext
+ENV PLUGINS=$MIPAV/plugins
+ENV CLASSPATH=$JAVALIB/*:$MIPAV:$MIPAV/lib/*:$PLUGINS
+
+
+
