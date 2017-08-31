@@ -52,5 +52,8 @@ ENV JAVALIB=$MIPAV/jre/lib/ext
 ENV PLUGINS=$MIPAV/plugins
 ENV CLASSPATH=$JAVALIB/*:$MIPAV:$MIPAV/lib/*:$PLUGINS
 
-
+# Dev version of Nipype is necessary for MIPAV-inteferaces
+# (https://github.com/nipy/nipype/pull/2065)
+RUN pip install git+https://github.com/nipy/nipype \ 
+    && rm -rf ~/.cache/pip
 
