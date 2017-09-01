@@ -7,7 +7,9 @@ RUN apt-get update  \
 
 RUN useradd -g root --create-home --shell /bin/bash neuro \
     && usermod -aG sudo neuro \
-    && chmod -R 775 /usr/local/miniconda
+    && usermod -aG users neuro \
+    && chmod -R 775 /usr/local/miniconda \
+    && chown -R neuro:users /niworkflows_data
 
 RUN apt-get update \
     && apt-get install -y python python-pip python-dev build-essential software-properties-common \
@@ -52,5 +54,8 @@ ENV JAVALIB=$MIPAV/jre/lib/ext
 ENV PLUGINS=$MIPAV/plugins
 ENV CLASSPATH=$JAVALIB/*:$MIPAV:$MIPAV/lib/*:$PLUGINS
 
-
+# Dev version of Nipype is necessary for MIPAV-inteferaces
+# (https://github.com/nipy/nipype/pull/2065)
+RUN pip install git+https://github.com/nipy/nipype \ 
+    && rm -rf ~/.cache/pip
 
