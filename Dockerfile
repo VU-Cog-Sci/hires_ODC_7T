@@ -7,7 +7,9 @@ RUN apt-get update  \
 
 RUN useradd -g root --create-home --shell /bin/bash neuro \
     && usermod -aG sudo neuro \
-    && chmod -R 775 /usr/local/miniconda
+    && usermod -aG users neuro \
+    && chmod -R 775 /usr/local/miniconda \
+    && chown -R neuro:users /niworkflows_data
 
 RUN apt-get update \
     && apt-get install -y python python-pip python-dev build-essential software-properties-common \
