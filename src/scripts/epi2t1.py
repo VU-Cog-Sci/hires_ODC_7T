@@ -3,37 +3,38 @@ import nipype.interfaces.io as nio
 import nipype.interfaces.utility as niu
 import nipype.pipeline.engine as pe
 import nipype.interfaces.io as nio
+from nipype.interfaces import fsl
 
-import os
-os.environ['SUBJECTS_DIR'] = '/data/freesurfer'
 
-identity = pe.Node(niu.IdentityInterface(fields=['subject']), name='identity')
-identity.iterables = [('subject', ['012'])]
+init_reg_file = '/data/derivatives/manual_transforms/sub-012_epi_bold-to-T1w.lta'
 
-templates = {'EPI_space_file':'/data/tests/unwarped_image/_run_{run}_task_{task}/sub-{subject}_task-{task}_run-{run}_bold_masked_mcf_mean_trans.nii.gz',
-             'T1':'/data/freesurfer/sub-{subject}/mri/T1.nii.gz'}
+wf = create_epi_to_T1_workflow(init_reg_file=init_reg_file,
+                               use_FS=False,
+                               do_FAST=False,
+                               apply_transform=True)
+wf.base_dir = '/data/workflow_folders'
 
-selector = pe.Node(nio.SelectFiles(templates), name='selector')
-selector.iterables = [('run', [1,2,3,4]), ('task', ['binoculardots055', 'binoculardots070'])]
+wf.inputs.inputspec.T1_file = '/data/derivatives/preproc_anat/fmriprep/sub-012/anat/sub-012_acq-highres_T1w_preproc.nii.gz'
+wf.inputs.inputspec.EPI_space_file = '/data/derivatives/topup/sub-012/func/sub-012_task-binoculardots070_run-1_bold_unwarped.nii.gz'
 
-init_reg_file = '/data/freesurfer/sub-012/sub-012_task-binoculardots070_run-1_to_T1.lta'
-wf = create_epi_to_T1_workflow(init_reg_file=init_reg_file, use_FS=True)
-wf.base_dir = '/tmp/'
+get_wm_seg = pe.Node(fsl.Threshold(thresh=3), name='get_wm_seg')
+get_wm_seg.inputs.in_file = '/data/derivatives/preproc_anat/fmriprep/sub-012/anat/sub-012_acq-highres_T1w_dtissue.nii.gz'
 
-def make_fs_subject_id(subject):
-    return 'sub-%s' % subject
+wf.connect(get_wm_seg, 'out_file', wf.get_node('inputspec'), 'wm_seg_file')
+ds = pe.Node(nio.DataSink(base_directory='/data/derivatives/epi2T1'), 'datasink')
 
-wf.connect(identity, 'subject', selector, 'subject')
-wf.connect(selector, 'EPI_space_file', wf.get_node('inputspec'), 'EPI_space_file')
-wf.connect(selector, 'T1', wf.get_node('inputspec'), 'T1_file')
-wf.connect(identity, ('subject', make_fs_subject_id), wf.get_node('inputspec'), 'freesurfer_subject_ID')
-
-wf.inputs.inputspec.freesurfer_subject_dir = '/data/freesurfer'
-
-ds = pe.Node(nio.DataSink(base_directory='/data/derivatives'), 'datasink')
-
-wf.connect(wf.get_node('outputspec'), 'EPI_T1_register_file', ds, 'EPI_T1_register_file')
 wf.connect(wf.get_node('outputspec'), 'EPI_T1_matrix_file', ds, 'EPI_T1_matrix_file')
 wf.connect(wf.get_node('outputspec'), 'T1_EPI_matrix_file', ds, 'T1_EPI_matrix_file')
+wf.connect(wf.get_node('outputspec'), 'transformed_EPI_space_file', ds, 'transformed_EPI')
 
-wf.run()
+wf.get_node('flirt_e2t').inputs.searchr_x = [-5, 5]
+wf.get_node('flirt_e2t').inputs.searchr_y = [-5, 5]
+wf.get_node('flirt_e2t').inputs.searchr_z = [-5, 5]
+wf.get_node('flirt_e2t').inputs.dof = 6
+
+plugin_settings = {}
+plugin_settings['plugin'] = 'MultiProc'
+plugin_settings['plugin_args'] = {'n_procs': 4}
+
+#wf.write_graph()
+wf.run(**plugin_settings)
