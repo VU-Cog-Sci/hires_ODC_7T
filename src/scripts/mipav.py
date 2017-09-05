@@ -73,6 +73,16 @@ rename_t1w_skullstrip_masked = pe.Node(niu.Rename(), name='rename_T1w_skullstrip
 workflow.connect(grabber, ('t1w', set_postfix, 'skullstrip_masked.nii'), rename_t1w_skullstrip_masked, 'format_string')
 workflow.connect(skullstripper, 'outMasked2', rename_t1w_skullstrip_masked, 'in_file')
 
+
+# *** dura_estimation ***
+dura_estimation = pe.Node(mipav.JistBrainMp2rageDuraEstimation(outDura=True,
+                                                               inDistance=5,
+                                                               inoutput='dura_region'),
+                          name='dura_estimation')
+workflow.connect(grabber, 'inv2', dura_estimation, 'inSecond')
+workflow.connect(skullstripper, 'outBrain', dura_estimation, 'inSkull')
+
+
 # *** MGDM segmentation ***
 ATLAS_DIR = '/home/neuro/mipav/plugins/atlases'
 atlas = os.path.join(ATLAS_DIR, 'brain-segmentation-prior3.0',
@@ -94,6 +104,7 @@ mgdm_segmenter = pe.Node(mipav.JistBrainMgdmSegmentation(inMax=800,
                                                          xMaxProcess=8), name='mgdm_segmenter')
 workflow.connect(rename_t1_skullstrip_masked, 'out_file', mgdm_segmenter, 'inMP2RAGE')
 workflow.connect(rename_t1w_skullstrip_masked, 'out_file', mgdm_segmenter, 'inMP2RAGE2')
+workflow.connect(dura_estimation, 'outDura', mgdm_segmenter, 'inPV')
 
 # Datasink
 ds = pe.Node(nio.DataSink(base_directory='/data/derivatives/mipav'), name='datasink')
@@ -108,6 +119,8 @@ workflow.connect(rename_t1w_skullstrip_masked, 'out_file', ds, 'skullstrip.@T1w_
 
 workflow.connect(mgdm_segmenter, 'outLevelset', ds, 'segmenter.@levenset')
 workflow.connect(mgdm_segmenter, 'outSegmented', ds, 'segmenter.@segmented')
+
+workflow.connect(dura_estimation, 'outDura', ds, 'dura_estimation.@duramask')
 
 workflow.run()
 embed()
