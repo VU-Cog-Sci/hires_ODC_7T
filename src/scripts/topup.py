@@ -32,7 +32,8 @@ for i, bold_file in enumerate(subject_data['bold']):
         ".", "_").replace(" ", "").replace("-", "_").replace("_bold", "_wf")
 
     # Create sub-topup-workflow
-    subworkflows.append(create_bids_topup_workflow(mode='average', name=name))
+    #subworkflows.append(create_bids_topup_workflow(mode='average', name=name))
+    subworkflows.append(create_bids_topup_workflow(mode='average', package='afni', name=name))
     workflow.connect(grabber, ('bold', get_item, i), subworkflows[i], 'inputnode.bold')
 
     # Find fieldmap and metadata
