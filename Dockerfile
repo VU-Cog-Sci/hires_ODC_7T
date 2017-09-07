@@ -59,5 +59,8 @@ ENV CLASSPATH=$JAVALIB/*:$MIPAV:$MIPAV/lib/*:$PLUGINS
 RUN pip install https://github.com/Gilles86/nipype/archive/lta_convert.zip \ 
     && rm -rf ~/.cache/pip
 
-RUN curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
+USER root
+RUN rm -rf $ANTSPATH/* \
+    && curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
     | tar -xzC $ANTSPATH --strip-components 1
+USER neuro
