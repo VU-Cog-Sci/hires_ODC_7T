@@ -61,6 +61,6 @@ RUN pip install https://github.com/Gilles86/nipype/archive/lta_convert.zip \
 
 USER root
 RUN rm -rf $ANTSPATH/* \
-    && curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
-    | tar -xzC $ANTSPATH --strip-components 1
+    && curl -sSL "https://dl.dropbox.com/s/f3rvpefq9oq65ki/ants.tar.gz" \
+    | tar -xzC $ANTSPATH --strip-components 2
 USER neuro
