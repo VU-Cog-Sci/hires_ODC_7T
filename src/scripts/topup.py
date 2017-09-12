@@ -5,6 +5,7 @@ from spynoza.hires.workflows import init_hires_unwarping_wf
 from IPython import embed
 from nipype.utils.filemanip import split_filename
 from operator import itemgetter
+#from IPython
 
 import nibabel as nb
 
@@ -15,11 +16,17 @@ grabber = pe.Node(BIDSGrabber(anat_only=False), name='bids_grabber')
 grabber.inputs.subject_id = '012'
 grabber.inputs.subject_data = subject_data
 
-wf = init_hires_unwarping_wf(method='topup', bids_layout=layout, topup_package='afni', single_warpfield=True)
+bold_epi = subject_data['bold']
+epi_op = list([layout.get_fieldmap(e)['epi'] for e in subject_data['bold']])
+
+wf = init_hires_unwarping_wf(method='topup',
+                             bold_epi=bold_epi,
+                             epi_op=epi_op,
+                             bids_layout=layout,
+                             topup_package='afni',
+                             single_warpfield=True)
 wf.base_dir = '/data/workflow_folders'
 
-wf.inputs.inputspec.bold_epi = subject_data['bold']
-wf.inputs.inputspec.epi_op = [layout.get_fieldmap(e)['epi'] for e in subject_data['bold']]
 
 ds_warpfield = pe.MapNode(DerivativesDataSink(base_directory='/data/derivatives/topup.new',
                                           suffix='warpfield'),
