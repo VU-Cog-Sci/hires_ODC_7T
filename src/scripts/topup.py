@@ -14,7 +14,7 @@ subject = '012'
 
 
 for package in ['fsl', 'afni']:
-    for task in ['binoculardots055', 'binoculardots077']:
+    for task in ['binoculardots055', 'binoculardots070']:
 
         subject_data, layout = collect_data('/data/sourcedata', subject, 'highres', task=task)
 
