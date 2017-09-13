@@ -57,6 +57,7 @@ ENV CLASSPATH=$JAVALIB/*:$MIPAV:$MIPAV/lib/*:$PLUGINS
 # Dev version of Nipype is necessary for MIPAV-inteferaces
 # (https://github.com/nipy/nipype/pull/2065)
 RUN pip install https://github.com/Gilles86/nipype/archive/lta_convert.zip \ 
+    && pip install bottleneck \
     && rm -rf ~/.cache/pip
 
 USER root
