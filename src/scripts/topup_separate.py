@@ -24,7 +24,7 @@ for package in ['fsl', 'afni']:
 
         bold_epi = subject_data['bold']
         epi_op = list([layout.get_fieldmap(e)['epi'] for e in subject_data['bold']])
-        init_reg_file = '/data/derivatives/manual_transforms/sub-012_task-{task}_run-5_to_T1w_preproc.lta'.format(**locals())
+        init_reg_file = sorted(glob.glob('/data/derivatives/manual_transforms/sub-012_task-{task}_run-*_to_T1w_preproc.lta'.format(**locals())))
 
         t1w = '/data/derivatives/preproc_anat/fmriprep/sub-012/anat/sub-012_acq-highres_T1w_preproc.nii.gz'
         t1w_mask = '/data/derivatives/preproc_anat/fmriprep/sub-012/anat/sub-012_acq-highres_T1w_brainmask.nii.gz'
@@ -33,20 +33,21 @@ for package in ['fsl', 'afni']:
         mask_t1w.inputs.in_file = t1w
         mask_t1w.inputs.mask_file = t1w_mask
 
-        wf = init_hires_unwarping_wf(method='topup',
+        wf = init_hires_unwarping_wf(name='hires_topup_separate',
+                                     method='topup',
                                      bold_epi=bold_epi,
                                      epi_op=epi_op,
                                      init_reg_file=init_reg_file,
                                      linear_registration_parameters='linear_precise.json',
                                      bids_layout=layout,
                                      topup_package=package,
-                                     single_warpfield=True)
+                                     single_warpfield=False)
         wf.base_dir = '/data/workflow_folders'
 
         wf.connect(mask_t1w, 'out_file', wf.get_node('inputspec'), 'T1w')
 
 
-        ds_warpfield = pe.MapNode(DerivativesDataSink(base_directory='/data/derivatives/topup.new.{package}'.format(**locals()),
+        ds_warpfield = pe.MapNode(DerivativesDataSink(base_directory='/data/derivatives/topup.new.{package}.separate'.format(**locals()),
                                                   suffix='warpfield'),
                                   iterfield=['in_file', 'source_file'],
                                   name='ds_warpfield')
@@ -54,7 +55,7 @@ for package in ['fsl', 'afni']:
         wf.connect(wf.get_node('outputspec'), 'bold_epi_to_T1w_transforms', ds_warpfield,'in_file')
 
 
-        ds_unwarped = pe.MapNode(DerivativesDataSink(base_directory='/data/derivatives/topup.new.{package}'.format(**locals()),
+        ds_unwarped = pe.MapNode(DerivativesDataSink(base_directory='/data/derivatives/topup.new.{package}.separate'.format(**locals()),
                                                   suffix='unwarped'),
                                   iterfield=['in_file', 'source_file'],
                                   name='ds_unwarped')
