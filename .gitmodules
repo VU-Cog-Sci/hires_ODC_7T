@@ -2,3 +2,6 @@
 	path = spynoza
 	url = https://github.com/spinoza-centre/spynoza/
 	branch = 7t_hires
+[submodule "nipype"]
+	path = nipype
+	url = https://github.com/Gilles86/nipype.git
