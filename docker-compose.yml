@@ -11,5 +11,6 @@ services:
      - ./notebooks:/home/neuro/notebooks
      - ./src:/home/neuro/src
      - ./spynoza:/home/neuro/spynoza
+     - ./nipype:/home/neuro/nipype
      - $HOME/data/hires:/data
      - $HOME/workflow_folders:/home/neuro/workflow_folders

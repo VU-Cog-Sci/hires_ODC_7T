@@ -54,14 +54,15 @@ ENV JAVALIB=$MIPAV/jre/lib/ext
 ENV PLUGINS=$MIPAV/plugins
 ENV CLASSPATH=$JAVALIB/*:$MIPAV:$MIPAV/lib/*:$PLUGINS
 
-# Dev version of Nipype is necessary for MIPAV-inteferaces
-# (https://github.com/nipy/nipype/pull/2065)
-RUN pip install https://github.com/Gilles86/nipype/archive/lta_convert.zip \ 
-    && pip install bottleneck \
-    && rm -rf ~/.cache/pip
-
 USER root
 RUN rm -rf $ANTSPATH/* \
     && curl -sSL "https://dl.dropbox.com/s/f3rvpefq9oq65ki/ants.tar.gz" \
     | tar -xzC $ANTSPATH --strip-components 2
+
+COPY nipype/ /home/neuro/nipype
+RUN pip uninstall -y nipype
+RUN pip install -e /home/neuro/nipype && \
+    pip install bottleneck && \
+    rm -rf ~/.cache/pip
+
 USER neuro
